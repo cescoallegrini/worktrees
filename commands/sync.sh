@@ -1,7 +1,7 @@
 # wt sync
 _wt_sync() {
   local root
-  root="$(_wt_root)" || return 1
+  root="$(_wt_resolve_root)" || return 1
 
   local main_dir
   main_dir="$(_wt_main_dir "$root")"

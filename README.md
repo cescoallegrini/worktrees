@@ -42,9 +42,43 @@ DEFAULT_TARGET_DIR="$HOME/Projects"
 
 | Variable | Description |
 |----------|-------------|
-| `DEFAULT_TARGET_DIR` | Default parent directory for `wt init`. When set, the target directory is derived from the repo name. |
+| `DEFAULT_TARGET_DIR` | Default parent directory for `wt init`. Also used for interactive project selection when running commands outside a project (see [Project resolution](#project-resolution)). |
+
+## Project resolution
+
+All commands except `init` need to know which project to operate on. `wt` resolves this in order:
+
+1. **`-p` / `--project` flag** — explicitly specify the project path
+2. **Current directory** — walks up from `$PWD` looking for a `.bare/` directory
+3. **Interactive picker** — if `DEFAULT_TARGET_DIR` is set and a TTY is available, presents a project picker (uses `fzf` if installed, numbered menu otherwise)
+4. **Error** — with guidance to use `-p` or set `DEFAULT_TARGET_DIR`
+
+In non-interactive environments, the picker is skipped and an error is returned instead.
+
+```sh
+# Explicit project
+wt -p ~/Projects/api list
+
+# From inside a project — just works
+cd ~/Projects/api/main
+wt list
+
+# From anywhere with DEFAULT_TARGET_DIR set — interactive picker
+cd ~
+wt list
+# → Select project:
+#   1) api
+#   2) frontend
+# Choice [1-2]:
+```
 
 ## Commands
+
+### Global options
+
+| Flag | Description |
+|------|-------------|
+| `-p`, `--project <path>` | Operate on a specific project. Must be placed before the subcommand. |
 
 ### `wt init <remote-url> [target-dir]`
 

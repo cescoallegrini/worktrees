@@ -11,9 +11,22 @@ for _f in "$_WT_DIR"/commands/*.sh; do source "$_f"; done
 unset _f
 
 wt() {
+  local _WT_PROJECT=""
+
+  # Parse global flags before the subcommand
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -p|--project) _WT_PROJECT="$2"; shift 2 ;;
+      *) break ;;
+    esac
+  done
+
   local cmd="$1"
   if [[ -z "$cmd" ]]; then
-    echo "Usage: wt <command> [options]"
+    echo "Usage: wt [-p <project>] <command> [options]"
+    echo ""
+    echo "Global options:"
+    echo "  -p, --project <path>  Operate on a specific project"
     echo ""
     echo "Commands:"
     echo "  init     Scaffold a bare-repo + worktrees container"

@@ -17,7 +17,7 @@ _wt_create() {
   fi
 
   local root
-  root="$(_wt_root)" || return 1
+  root="$(_wt_resolve_root)" || return 1
 
   # Default base to origin's default branch
   if [[ -z "$base" ]]; then

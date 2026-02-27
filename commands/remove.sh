@@ -8,7 +8,7 @@ _wt_remove() {
   fi
 
   local root
-  root="$(_wt_root)" || return 1
+  root="$(_wt_resolve_root)" || return 1
 
   local dir_name
   dir_name="$(_wt_normalize_branch "$branch")"

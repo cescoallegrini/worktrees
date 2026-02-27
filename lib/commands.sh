@@ -4,7 +4,7 @@
 _wt_custom_cmd() {
   local cmd="$1"; shift
   local root
-  root="$(_wt_root 2>/dev/null)" || { echo "Error: not inside a worktree container."; return 1; }
+  root="$(_wt_resolve_root)" || return 1
 
   local project_cmd="$root/.wt/commands/$cmd"
   local global_cmd="$HOME/.wt/commands/$cmd"

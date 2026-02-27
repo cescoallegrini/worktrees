@@ -21,14 +21,28 @@ _wt_resolve_root() {
   # 1. Explicit -p flag
   if [[ -n "${_WT_PROJECT:-}" ]]; then
     local resolved
-    resolved="$(cd "$_WT_PROJECT" 2>/dev/null && pwd)" || {
-      echo "Error: $_WT_PROJECT does not exist." >&2; return 1
-    }
-    if [[ -d "$resolved/.bare" ]]; then
-      echo "$resolved"
-      return 0
+
+    # Try as a direct path first
+    if resolved="$(cd "$_WT_PROJECT" 2>/dev/null && pwd)"; then
+      if [[ -d "$resolved/.bare" ]]; then
+        echo "$resolved"
+        return 0
+      fi
+      echo "Error: $resolved is not a worktree container." >&2
+      return 1
     fi
-    echo "Error: $resolved is not a worktree container (no .bare/ found)." >&2
+
+    # Try as a project name under DEFAULT_TARGET_DIR
+    if [[ -n "${DEFAULT_TARGET_DIR:-}" && -d "$DEFAULT_TARGET_DIR/$_WT_PROJECT" ]]; then
+      if [[ -d "$DEFAULT_TARGET_DIR/$_WT_PROJECT/.bare" ]]; then
+        echo "$(cd "$DEFAULT_TARGET_DIR/$_WT_PROJECT" && pwd)"
+        return 0
+      fi
+      echo "Error: $DEFAULT_TARGET_DIR/$_WT_PROJECT is not a worktree container." >&2
+      return 1
+    fi
+
+    echo "Error: $_WT_PROJECT is not a valid path or project name." >&2
     return 1
   fi
 

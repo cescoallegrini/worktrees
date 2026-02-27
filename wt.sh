@@ -25,7 +25,7 @@ if [[ -z "$cmd" ]]; then
   echo "Usage: wt [-p <project>] <command> [options]"
   echo ""
   echo "Global options:"
-  echo "  -p, --project <path>  Operate on a specific project"
+  echo "  -p, --project <name|path>  Operate on a specific project"
   echo ""
   echo "Commands:"
   echo "  init     Scaffold a bare-repo + worktrees container"

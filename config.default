@@ -1,0 +1,5 @@
+# wt configuration — sourced as a shell script
+# See https://github.com/cescoallegrini/worktrees for documentation
+
+# Default parent directory for wt init and interactive project selection
+# DEFAULT_TARGET_DIR=""

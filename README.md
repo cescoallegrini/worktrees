@@ -24,16 +24,15 @@ The primary worktree directory is named after the remote's default branch — `m
 
 ## Installation
 
-Clone the repo and source `wt.sh` from your shell config:
-
 ```sh
-git clone https://github.com/yourusername/wt.git ~/.local/bin/wt
-echo 'source ~/.local/bin/wt/wt.sh' >> ~/.zshrc
+curl -fsSL https://raw.githubusercontent.com/cescoallegrini/worktrees/main/install.sh | bash
 ```
+
+This installs wt to `~/.wt/` and adds a source line to your shell config (`.zshrc`, `.bashrc`, etc.). Running it again updates to the latest version — your config and custom commands are preserved.
 
 ## Configuration
 
-Create `~/.wt/config` to set global defaults. The file is sourced as a shell script.
+`~/.wt/config` is created on first install. Edit it to set global defaults:
 
 ```sh
 # ~/.wt/config
@@ -260,18 +259,20 @@ wt deploy staging
 ## Project structure
 
 ```
-wt.sh                  # Entry point — source this from .zshrc
+install.sh             # curl | bash installer
+wt.sh                  # Entry point — sourced from shell rc
+config.default         # Template copied to ~/.wt/config on first install
 commands/
 ├── create.sh          # wt create
 ├── init.sh            # wt init
 ├── list.sh            # wt list
 ├── remove.sh          # wt remove
 └── sync.sh            # wt sync
-lib/
+core/
 ├── commands.sh        # Custom command dispatcher
 ├── config.sh          # Loads ~/.wt/config
 ├── hooks.sh           # Hook runner
-└── root.sh            # Container root detection and branch helpers
+└── root.sh            # Project resolution and branch helpers
 ```
 
 ## License

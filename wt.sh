@@ -1,12 +1,12 @@
 # wt — Worktree management CLI
-# Source this from .zshrc: source ~/.local/bin/wt/wt.sh
+# Source this from your shell rc: source ~/.wt/lib/wt.sh
 
 _WT_DIR="${0:a:h}"
 
-source "$_WT_DIR/lib/config.sh"
-source "$_WT_DIR/lib/root.sh"
-source "$_WT_DIR/lib/hooks.sh"
-source "$_WT_DIR/lib/commands.sh"
+source "$_WT_DIR/core/config.sh"
+source "$_WT_DIR/core/root.sh"
+source "$_WT_DIR/core/hooks.sh"
+source "$_WT_DIR/core/commands.sh"
 for _f in "$_WT_DIR"/commands/*.sh; do source "$_f"; done
 unset _f
 

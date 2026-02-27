@@ -28,7 +28,7 @@ The primary worktree directory is named after the remote's default branch — `m
 curl -fsSL https://raw.githubusercontent.com/cescoallegrini/worktrees/main/install.sh | bash
 ```
 
-This installs wt to `~/.wt/` and adds a source line to your shell config (`.zshrc`, `.bashrc`, etc.). Running it again updates to the latest version — your config and custom commands are preserved.
+This installs wt to `~/.wt/` and symlinks it to `~/.local/bin/wt`. Running it again updates to the latest version — your config and custom commands are preserved. Ensure `~/.local/bin` is on your `PATH`.
 
 ## Configuration
 
@@ -133,10 +133,18 @@ Warns if there are uncommitted changes and asks for confirmation. Runs `pre-remo
 
 ### `wt list`
 
-List all worktrees.
+List all worktrees with their current commit.
 
-```sh
-wt list
+```
+$ wt list
+my-project — ~/Projects/my-project
+
+Base:
+  main     4e864a0 Fix TTY detection...
+
+Worktrees:
+  feature  cb6f456 Convert wt from...
+  hotfix   abff7a3 Add --project...
 ```
 
 ## Hooks
@@ -260,7 +268,7 @@ wt deploy staging
 
 ```
 install.sh             # curl | bash installer
-wt.sh                  # Entry point — sourced from shell rc
+wt.sh                  # Entry point — standalone bash script
 config.default         # Template copied to ~/.wt/config on first install
 commands/
 ├── create.sh          # wt create

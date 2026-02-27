@@ -1,7 +1,7 @@
+#!/usr/bin/env bash
 # wt — Worktree management CLI
-# Source this from your shell rc: source ~/.wt/lib/wt.sh
 
-_WT_DIR="${0:a:h}"
+_WT_DIR="$(cd "$(dirname "$(readlink -f "$0" 2>/dev/null || realpath "$0")")" && pwd)"
 
 source "$_WT_DIR/core/config.sh"
 source "$_WT_DIR/core/root.sh"
@@ -10,36 +10,34 @@ source "$_WT_DIR/core/commands.sh"
 for _f in "$_WT_DIR"/commands/*.sh; do source "$_f"; done
 unset _f
 
-wt() {
-  local _WT_PROJECT=""
+_WT_PROJECT=""
 
-  # Parse global flags before the subcommand
-  while [[ $# -gt 0 ]]; do
-    case "$1" in
-      -p|--project) _WT_PROJECT="$2"; shift 2 ;;
-      *) break ;;
-    esac
-  done
-
-  local cmd="$1"
-  if [[ -z "$cmd" ]]; then
-    echo "Usage: wt [-p <project>] <command> [options]"
-    echo ""
-    echo "Global options:"
-    echo "  -p, --project <path>  Operate on a specific project"
-    echo ""
-    echo "Commands:"
-    echo "  init     Scaffold a bare-repo + worktrees container"
-    echo "  create   Create a new worktree"
-    echo "  sync     Fetch origin and update base branch"
-    echo "  remove   Remove a worktree and its branch"
-    echo "  list     List all worktrees"
-    return 1
-  fi
-
-  shift
-  case "$cmd" in
-    init|create|remove|sync|list) "_wt_$cmd" "$@" ;;
-    *) _wt_custom_cmd "$cmd" "$@" ;;
+# Parse global flags before the subcommand
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -p|--project) _WT_PROJECT="$2"; shift 2 ;;
+    *) break ;;
   esac
-}
+done
+
+cmd="$1"
+if [[ -z "$cmd" ]]; then
+  echo "Usage: wt [-p <project>] <command> [options]"
+  echo ""
+  echo "Global options:"
+  echo "  -p, --project <path>  Operate on a specific project"
+  echo ""
+  echo "Commands:"
+  echo "  init     Scaffold a bare-repo + worktrees container"
+  echo "  create   Create a new worktree"
+  echo "  sync     Fetch origin and update base branch"
+  echo "  remove   Remove a worktree and its branch"
+  echo "  list     List all worktrees"
+  exit 1
+fi
+
+shift
+case "$cmd" in
+  init|create|remove|sync|list) "_wt_$cmd" "$@" ;;
+  *) _wt_custom_cmd "$cmd" "$@" ;;
+esac

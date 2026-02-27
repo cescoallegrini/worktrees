@@ -3,7 +3,7 @@ set -euo pipefail
 
 REPO_URL="https://github.com/cescoallegrini/worktrees.git"
 WT_DIR="$HOME/.wt"
-SOURCE_LINE='source "$HOME/.wt/lib/wt.sh"'
+BIN_DIR="$HOME/.local/bin"
 
 tmp_dir="$(mktemp -d)"
 trap 'rm -rf "$tmp_dir"' EXIT
@@ -16,6 +16,7 @@ echo "==> Installing to $WT_DIR ..."
 mkdir -p "$WT_DIR"
 rm -rf "$WT_DIR/lib"
 mv "$tmp_dir/repo" "$WT_DIR/lib"
+chmod +x "$WT_DIR/lib/wt.sh"
 
 # Create user config from template if it doesn't exist
 if [[ ! -f "$WT_DIR/config" ]]; then
@@ -26,16 +27,26 @@ fi
 # Ensure global commands directory exists
 mkdir -p "$WT_DIR/commands"
 
-# Add source line to shell rc files
-shell_configured=false
+# Symlink wt to PATH
+mkdir -p "$BIN_DIR"
+ln -sf "$WT_DIR/lib/wt.sh" "$BIN_DIR/wt"
+echo "==> Symlinked wt to $BIN_DIR/wt"
 
+# Remove old source line from shell rc files
 for rc in "$HOME/.zshrc" "$HOME/.bashrc"; do
   [[ -f "$rc" ]] || continue
-  shell_configured=true
-  if ! grep -qF '.wt/lib/wt.sh' "$rc"; then
-    echo "" >> "$rc"
-    echo "$SOURCE_LINE" >> "$rc"
-    echo "==> Added source line to $rc"
+  if grep -qF '.wt/lib/wt.sh' "$rc"; then
+    sed -i '' '/.wt\/lib\/wt.sh/d' "$rc"
+    echo "==> Removed old source line from $rc"
+  fi
+done
+
+# Ensure ~/.local/bin is on PATH
+path_configured=false
+for rc in "$HOME/.zshrc" "$HOME/.bashrc"; do
+  [[ -f "$rc" ]] || continue
+  if grep -qF '.local/bin' "$rc"; then
+    path_configured=true
   fi
 done
 
@@ -44,13 +55,12 @@ echo "============================================"
 echo "  wt installed successfully!"
 echo "============================================"
 
-if [[ "$shell_configured" == false ]]; then
+if [[ "$path_configured" == false ]]; then
   echo ""
-  echo "  Add this to your shell config:"
-  echo "    $SOURCE_LINE"
+  echo "  Ensure ~/.local/bin is on your PATH:"
+  echo "    export PATH=\"\$HOME/.local/bin:\$PATH\""
 fi
 
 echo ""
-echo "  Restart your shell or run:"
-echo "    $SOURCE_LINE"
+echo "  Restart your shell or run: hash -r"
 echo "============================================"

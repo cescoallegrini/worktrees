@@ -74,7 +74,7 @@ _wt_pick_project() {
   fi
 
   # Non-interactive: error with guidance
-  if [[ ! -t 0 || ! -t 1 ]]; then
+  if ! : </dev/tty >/dev/tty 2>/dev/null; then
     echo "Error: not inside a project and no TTY for interactive selection." >&2
     echo "  Use -p <path> to specify the project." >&2
     return 1
@@ -85,7 +85,7 @@ _wt_pick_project() {
     local names=()
     for p in "${projects[@]}"; do names+=("$(basename "$p")"); done
     local choice
-    choice="$(printf '%s\n' "${names[@]}" | fzf --prompt="Select project: ")" || return 1
+    choice="$(printf '%s\n' "${names[@]}" | fzf --prompt="Select project: " </dev/tty >/dev/tty)" || return 1
     echo "$search_dir/$choice"
     return 0
   fi
@@ -99,7 +99,7 @@ _wt_pick_project() {
   done
   printf "Choice [1-%d]: " "${#projects[@]}" >&2
   local choice
-  read -r choice
+  read -r choice </dev/tty
   if [[ "$choice" -ge 1 && "$choice" -le "${#projects[@]}" ]] 2>/dev/null; then
     echo "${projects[$((choice))]}"
     return 0

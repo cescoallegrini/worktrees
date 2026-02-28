@@ -1,14 +1,21 @@
 # wt remove <branch>
 _wt_remove() {
   local branch="$1"
-
-  if [[ -z "$branch" ]]; then
-    echo "Usage: wt remove <branch>"
-    return 1
-  fi
-
   local root
   root="$(_wt_resolve_root)" || return 1
+
+  if [[ -z "$branch" ]]; then
+    local branches=()
+    for d in "$root"/worktrees/*/; do
+      [[ -d "$d" ]] || continue
+      branches+=("$(basename "$d")")
+    done
+    if [[ ${#branches[@]} -eq 0 ]]; then
+      echo "No worktrees to remove."
+      return 1
+    fi
+    branch="$(printf '%s\n' "${branches[@]}" | wt_pick "Select branch to remove")" || return 1
+  fi
 
   local dir_name
   dir_name="$(_wt_normalize_branch "$branch")"

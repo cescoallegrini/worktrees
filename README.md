@@ -121,12 +121,13 @@ wt sync
 
 Runs `pre-sync` and `post-sync` hooks.
 
-### `wt remove <branch>`
+### `wt remove [branch]`
 
-Remove a worktree and delete its local branch.
+Remove a worktree and delete its local branch. Without arguments, presents an interactive picker listing non-base worktrees.
 
 ```sh
-wt remove fix-login
+wt remove fix-login  # direct
+wt remove            # interactive picker
 ```
 
 Warns if there are uncommitted changes and asks for confirmation. Runs `pre-remove` and `post-remove` hooks.
@@ -239,8 +240,9 @@ This auto-loads all functions from `utils/`. Available utilities:
 
 | Function | File | Description |
 |----------|------|-------------|
-| `wt_pick <prompt>` | `utils/pick.sh` | Interactive picker — reads items from stdin, prints selection to stdout. Uses fzf if available, numbered menu fallback. Auto-selects when only one item. |
 | `wt_branch_path <branch>` | `utils/branch-path.sh` | Resolve a branch name to its worktree filesystem path. |
+| `wt_pick <prompt>` | `utils/pick.sh` | Interactive picker — reads items from stdin, prints selection to stdout. Uses fzf if available, numbered menu fallback. Auto-selects when only one item. |
+| `wt_select_branch` | `utils/select-branch.sh` | Collect all worktree branches and present an interactive picker. Returns the selected branch name. |
 
 ### Example: global `wt open`
 

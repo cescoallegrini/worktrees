@@ -29,7 +29,8 @@ if [[ -z "$cmd" ]]; then
   echo "  -p, --project <name|path>  Operate on a specific project"
   echo ""
   echo "Commands:"
-  echo "  init     Scaffold a bare-repo + worktrees container"
+  echo "  init     Scaffold a bare-repo + worktrees container from a remote"
+  echo "  convert  Convert a normal git repo to wt layout"
   echo "  create   Create a new worktree"
   echo "  sync     Fetch origin and update base branch"
   echo "  remove   Remove a worktree and its branch"
@@ -39,6 +40,6 @@ fi
 
 shift
 case "$cmd" in
-  init|create|remove|sync|list) "_wt_$cmd" "$@" ;;
+  init|convert|create|remove|sync|list) "_wt_$cmd" "$@" ;;
   *) _wt_custom_cmd "$cmd" "$@" ;;
 esac

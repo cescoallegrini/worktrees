@@ -6,7 +6,7 @@ A minimal CLI for managing [git worktrees](https://git-scm.com/docs/git-worktree
 
 ## Layout
 
-After running `wt init`, you get this structure:
+After running `wt init` or `wt convert`, you get this structure:
 
 ```
 my-project/
@@ -45,7 +45,7 @@ DEFAULT_TARGET_DIR="$HOME/Projects"
 
 ## Project resolution
 
-All commands except `init` need to know which project to operate on. `wt` resolves this in order:
+All commands except `init` and `convert` need to know which project to operate on. `wt` resolves this in order:
 
 1. **`-p` / `--project` flag** — explicitly specify the project path
 2. **Current directory** — walks up from `$PWD` looking for a `.bare/` directory
@@ -93,6 +93,23 @@ wt init git@github.com:org/api.git ~/work/api
 ```
 
 Creates the `.wt/commands/` and `.wt/hooks/` directories for you to add custom commands and hooks.
+
+### `wt convert [target-dir]`
+
+Convert an existing git repository into the wt bare-repo layout. Run from inside the repo.
+
+```sh
+cd ~/existing-project
+wt convert
+
+# Or move to a new location:
+cd ~/existing-project
+wt convert ~/Projects/my-project
+```
+
+Requires an `origin` remote to be configured. Preserves your working tree state — staged changes, unstaged modifications, and untracked files are kept intact in the resulting worktree.
+
+If you're on a branch other than the default, both worktrees are created: the default branch gets a fresh checkout, and your current branch preserves your in-progress work under `worktrees/`. Other local branches are kept in the bare repo but don't get worktrees — use `wt create` to check them out.
 
 ### `wt create <branch> [--from <base>]`
 
@@ -285,6 +302,7 @@ install.sh             # curl | bash installer
 wt.sh                  # Entry point — standalone bash script
 config.default         # Template copied to ~/.wt/config on first install
 commands/
+├── convert.sh         # wt convert
 ├── create.sh          # wt create
 ├── init.sh            # wt init
 ├── list.sh            # wt list

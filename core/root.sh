@@ -94,32 +94,12 @@ _wt_pick_project() {
     return 1
   fi
 
-  # Interactive: fzf if available, otherwise numbered menu
-  if command -v fzf &>/dev/null; then
-    local names=()
-    for p in "${projects[@]}"; do names+=("$(basename "$p")"); done
-    local choice
-    choice="$(printf '%s\n' "${names[@]}" | fzf --prompt="Select project: " </dev/tty >/dev/tty)" || return 1
-    echo "$search_dir/$choice"
-    return 0
-  fi
+  local names=()
+  for p in "${projects[@]}"; do names+=("$(basename "$p")"); done
 
-  # Numbered menu fallback
-  echo "Select a project:" >&2
-  local i=1
-  for p in "${projects[@]}"; do
-    echo "  $i) $(basename "$p")" >&2
-    ((i++))
-  done
-  printf "Choice [1-%d]: " "${#projects[@]}" >&2
   local choice
-  read -r choice </dev/tty
-  if [[ "$choice" -ge 1 && "$choice" -le "${#projects[@]}" ]] 2>/dev/null; then
-    echo "${projects[$((choice))]}"
-    return 0
-  fi
-  echo "Error: invalid selection." >&2
-  return 1
+  choice="$(printf '%s\n' "${names[@]}" | "$_WT_DIR/core/pick.sh" "Select project")" || return 1
+  echo "$search_dir/$choice"
 }
 
 # Get the default branch name from the bare repo's HEAD

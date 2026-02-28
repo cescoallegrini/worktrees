@@ -98,7 +98,7 @@ _wt_pick_project() {
   for p in "${projects[@]}"; do names+=("$(basename "$p")"); done
 
   local choice
-  choice="$(printf '%s\n' "${names[@]}" | "$_WT_DIR/core/pick.sh" "Select project")" || return 1
+  choice="$(printf '%s\n' "${names[@]}" | wt_pick "Select project")" || return 1
   echo "$search_dir/$choice"
 }
 

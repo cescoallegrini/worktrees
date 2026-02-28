@@ -4,6 +4,7 @@
 _WT_DIR="$(cd "$(dirname "$(readlink -f "$0" 2>/dev/null || realpath "$0")")" && pwd)"
 
 source "$_WT_DIR/core/config.sh"
+source "$_WT_DIR/core/utils.sh"
 source "$_WT_DIR/core/root.sh"
 source "$_WT_DIR/core/hooks.sh"
 source "$_WT_DIR/core/commands.sh"

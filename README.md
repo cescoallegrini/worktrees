@@ -227,6 +227,21 @@ Project commands take priority over global commands with the same name.
 
 Custom commands receive `WT_BARE_PATH`, `WT_BASE_BRANCH`, and `WT_ROOT_PATH` as environment variables, plus any arguments passed after the command name.
 
+### Shared utilities
+
+Custom commands can source shared utility functions:
+
+```sh
+. "$HOME/.wt/lib/core/utils.sh"
+```
+
+This auto-loads all functions from `utils/`. Available utilities:
+
+| Function | File | Description |
+|----------|------|-------------|
+| `wt_pick <prompt>` | `utils/pick.sh` | Interactive picker — reads items from stdin, prints selection to stdout. Uses fzf if available, numbered menu fallback. Auto-selects when only one item. |
+| `wt_branch_path <branch>` | `utils/branch-path.sh` | Resolve a branch name to its worktree filesystem path. |
+
 ### Example: global `wt open`
 
 A global command at `~/.wt/commands/open` that opens a worktree in your editor:
@@ -234,20 +249,17 @@ A global command at `~/.wt/commands/open` that opens a worktree in your editor:
 ```sh
 #!/bin/sh
 # ~/.wt/commands/open
-branch="$1"
-[ -z "$branch" ] && echo "Usage: wt open <branch>" && exit 1
+. "$HOME/.wt/lib/core/utils.sh"
 
-if [ "$branch" = "$WT_BASE_BRANCH" ]; then
-  wt_path="$WT_ROOT_PATH/$WT_BASE_BRANCH"
-else
-  wt_path="$WT_ROOT_PATH/worktrees/$branch"
-fi
+branch="${1:-$(printf '%s\n' "$WT_BASE_BRANCH" | wt_pick "Select branch")}"
+wt_path="$(wt_branch_path "$branch")"
 
 code "$wt_path"
 ```
 
 ```sh
-wt open fix-login
+wt open fix-login  # direct
+wt open            # interactive picker
 ```
 
 ### Example: project-specific command
@@ -280,7 +292,9 @@ core/
 ├── commands.sh        # Custom command dispatcher
 ├── config.sh          # Loads ~/.wt/config
 ├── hooks.sh           # Hook runner
-└── root.sh            # Project resolution and branch helpers
+├── root.sh            # Project resolution and branch helpers
+└── utils.sh           # Auto-loads all utils/*.sh
+utils/                 # Shared utility functions (wt_pick, wt_branch_path, ...)
 ```
 
 ## License

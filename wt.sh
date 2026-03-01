@@ -12,10 +12,12 @@ for _f in "$_WT_DIR"/commands/*.sh; do source "$_f"; done
 unset _f
 
 _WT_PROJECT=""
+_WT_CURRENT=false
 
 # Parse global flags before the subcommand
 while [[ $# -gt 0 ]]; do
   case "$1" in
+    -c|--current) _WT_CURRENT=true; shift ;;
     -p|--project) _WT_PROJECT="$2"; shift 2 ;;
     *) break ;;
   esac
@@ -26,6 +28,7 @@ if [[ -z "$cmd" ]]; then
   echo "Usage: wt [-p <project>] <command> [options]"
   echo ""
   echo "Global options:"
+  echo "  -c, --current              Use the current project directly"
   echo "  -p, --project <name|path>  Operate on a specific project"
   echo ""
   echo "Commands:"

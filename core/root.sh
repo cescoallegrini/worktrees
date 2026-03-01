@@ -13,12 +13,27 @@ _wt_root() {
 }
 
 # Resolve the project root using the full resolution chain:
-#   1. Explicit _WT_PROJECT (set by -p flag at entry point)
-#   2. Upward traversal from $PWD
-#   3. Interactive picker from DEFAULT_TARGET_DIR (TTY only)
-#   4. Error
+#   1. -c flag: use current project from $PWD directly (fail if not inside one)
+#   2. Explicit _WT_PROJECT (set by -p flag at entry point)
+#   3. Upward traversal from $PWD + interactive picker
+#   4. Interactive picker from DEFAULT_TARGET_DIR
+#   5. Error
 _wt_resolve_root() {
-  # 1. Explicit -p flag
+  # 1. -c flag — current project, no picker
+  if [[ "${_WT_CURRENT:-false}" == true ]]; then
+    local dir="$PWD"
+    while [[ "$dir" != "/" ]]; do
+      if [[ -d "$dir/.bare" ]]; then
+        echo "$dir"
+        return 0
+      fi
+      dir="$(dirname "$dir")"
+    done
+    echo "Error: not inside a worktree container (no .bare/ found above $PWD)." >&2
+    return 1
+  fi
+
+  # 2. Explicit -p flag
   if [[ -n "${_WT_PROJECT:-}" ]]; then
     local resolved
 
@@ -47,14 +62,44 @@ _wt_resolve_root() {
   fi
 
   # 2. Upward traversal
+  local detected=""
   local dir="$PWD"
   while [[ "$dir" != "/" ]]; do
     if [[ -d "$dir/.bare" ]]; then
-      echo "$dir"
-      return 0
+      detected="$dir"
+      break
     fi
     dir="$(dirname "$dir")"
   done
+
+  if [[ -n "$detected" ]]; then
+    # No DEFAULT_TARGET_DIR — use current project directly
+    if [[ -z "${DEFAULT_TARGET_DIR:-}" ]]; then
+      echo "$detected"
+      return 0
+    fi
+
+    # Build list: current project first, then others from DEFAULT_TARGET_DIR
+    local current_name
+    current_name="$(basename "$detected")"
+    local items=("$current_name (current)")
+    for d in "$DEFAULT_TARGET_DIR"/*/; do
+      [[ -d "${d}.bare" ]] || continue
+      local name
+      name="$(basename "$d")"
+      [[ "$name" == "$current_name" ]] && continue
+      items+=("$name")
+    done
+
+    local choice
+    choice="$(printf '%s\n' "${items[@]}" | wt_pick "Select project")" || return 1
+    if [[ "$choice" == "$current_name (current)" ]]; then
+      echo "$detected"
+    else
+      echo "$DEFAULT_TARGET_DIR/$choice"
+    fi
+    return 0
+  fi
 
   # 3. Interactive picker
   if [[ -n "${DEFAULT_TARGET_DIR:-}" ]]; then

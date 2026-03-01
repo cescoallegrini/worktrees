@@ -47,22 +47,28 @@ DEFAULT_TARGET_DIR="$HOME/Projects"
 
 All commands except `init` and `convert` need to know which project to operate on. `wt` resolves this in order:
 
-1. **`-p` / `--project` flag** — explicitly specify the project path
-2. **Current directory** — walks up from `$PWD` looking for a `.bare/` directory
-3. **Interactive picker** — if `DEFAULT_TARGET_DIR` is set and a TTY is available, presents a project picker (uses `fzf` if installed, numbered menu otherwise)
-4. **Error** — with guidance to use `-p` or set `DEFAULT_TARGET_DIR`
-
-In non-interactive environments, the picker is skipped and an error is returned instead.
+1. **`-c` / `--current` flag** — use the project detected from `$PWD` directly. Fails if not inside a project. Takes precedence over `-p`.
+2. **`-p` / `--project` flag** — explicitly specify the project path or name.
+3. **Current directory + picker** — if inside a project and `DEFAULT_TARGET_DIR` is set, presents a picker with the current project first, followed by other projects. Without `DEFAULT_TARGET_DIR`, uses the current project directly.
+4. **Interactive picker** — if not inside a project but `DEFAULT_TARGET_DIR` is set, presents a project picker.
+5. **Error** — with guidance to use `-p` or set `DEFAULT_TARGET_DIR`.
 
 ```sh
+# Use current project directly
+wt -c list
+
 # Explicit project
 wt -p ~/Projects/api list
 
-# From inside a project — just works
+# From inside a project with DEFAULT_TARGET_DIR — picker with current first
 cd ~/Projects/api/main
 wt list
+# → Select project:
+#   1) api (current)
+#   2) frontend
+# Choice [1-2]:
 
-# From anywhere with DEFAULT_TARGET_DIR set — interactive picker
+# From anywhere with DEFAULT_TARGET_DIR set — project picker
 cd ~
 wt list
 # → Select project:
@@ -77,7 +83,8 @@ wt list
 
 | Flag | Description |
 |------|-------------|
-| `-p`, `--project <path>` | Operate on a specific project. Must be placed before the subcommand. |
+| `-c`, `--current` | Use the current project directly. Must be inside a project. |
+| `-p`, `--project <path>` | Operate on a specific project. |
 
 ### `wt init <remote-url> [target-dir]`
 

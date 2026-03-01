@@ -41,6 +41,7 @@ _wt_init() {
   branch="${branch#refs/heads/}"
   if [[ -z "$branch" ]]; then
     echo "Error: could not detect default branch from remote."
+    echo "  The remote may be empty. Push an initial commit first."
     return 1
   fi
 

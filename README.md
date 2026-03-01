@@ -92,6 +92,8 @@ wt init git@github.com:org/api.git
 wt init git@github.com:org/api.git ~/work/api
 ```
 
+The remote repository must have at least one commit — empty repositories (freshly created on GitHub with no commits) are not supported.
+
 Creates the `.wt/commands/` and `.wt/hooks/` directories for you to add custom commands and hooks.
 
 ### `wt convert [target-dir]`

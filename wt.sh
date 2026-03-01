@@ -34,12 +34,13 @@ if [[ -z "$cmd" ]]; then
   echo "  create   Create a new worktree"
   echo "  sync     Fetch origin and update base branch"
   echo "  remove   Remove a worktree and its branch"
+  echo "  pr       Check out a pull request into a worktree"
   echo "  list     List all worktrees"
   exit 1
 fi
 
 shift
 case "$cmd" in
-  init|convert|create|remove|sync|list) "_wt_$cmd" "$@" ;;
+  init|convert|create|remove|sync|list|pr) "_wt_$cmd" "$@" ;;
   *) _wt_custom_cmd "$cmd" "$@" ;;
 esac

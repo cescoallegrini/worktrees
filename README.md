@@ -130,6 +130,18 @@ The `--from` flag auto-resolves short names — `--from develop` will use `origi
 
 Runs `pre-create` and `post-create` hooks.
 
+### `wt pr <number>`
+
+Check out a pull request into a new worktree. Requires the [GitHub CLI](https://cli.github.com) (`gh`).
+
+```sh
+wt pr 42
+```
+
+Fetches the PR's branch name from GitHub, then creates a worktree for it — same as `wt create` but resolved from a PR number. Only supports PRs from the same repository (not forks).
+
+Runs `pre-create` and `post-create` hooks.
+
 ### `wt sync`
 
 Fetch from origin and fast-forward the primary worktree.

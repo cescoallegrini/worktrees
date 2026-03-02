@@ -56,7 +56,7 @@ _wt_convert() {
   git -C "$repo_dir/.bare" config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
 
   echo "==> Fetching all branches ..."
-  git -C "$repo_dir/.bare" fetch origin
+  git -C "$repo_dir/.bare" fetch origin || return 1
 
   # Detect default branch from the remote, not from HEAD (which tracks the current branch)
   local default_branch

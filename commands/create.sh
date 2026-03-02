@@ -45,7 +45,7 @@ _wt_create() {
     _wt_run_hook pre-create || return 1
 
   echo "==> Fetching latest from origin ..."
-  git -C "$root/.bare" fetch origin
+  git -C "$root/.bare" fetch origin || return 1
 
   # Check if branch exists on remote
   if git -C "$root/.bare" show-ref --verify --quiet "refs/remotes/origin/$branch" 2>/dev/null; then

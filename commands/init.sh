@@ -34,7 +34,7 @@ _wt_init() {
   git -C "$target/.bare" config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
 
   echo "==> Fetching all branches ..."
-  git -C "$target/.bare" fetch origin
+  git -C "$target/.bare" fetch origin || return 1
 
   local branch
   branch="$(git -C "$target/.bare" symbolic-ref HEAD 2>/dev/null)"

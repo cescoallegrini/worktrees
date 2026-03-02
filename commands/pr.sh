@@ -42,7 +42,7 @@ _wt_pr() {
     _wt_run_hook pre-create || return 1
 
   echo "==> Fetching latest from origin ..."
-  git -C "$root/.bare" fetch origin
+  git -C "$root/.bare" fetch origin || return 1
 
   echo "==> Checking out PR #$pr_number branch '$branch' ..."
   git -C "$root/.bare" worktree add "$root/worktrees/$dir_name" "$branch" || return 1

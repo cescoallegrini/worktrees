@@ -9,7 +9,7 @@ _wt_sync() {
   _wt_run_hook pre-sync || return 1
 
   echo "==> Fetching origin (with prune) ..."
-  git -C "$root/.bare" fetch origin --prune
+  git -C "$root/.bare" fetch origin --prune || return 1
 
   echo "==> Updating $(_wt_default_branch "$root") worktree (ff-only) ..."
   git -C "$main_dir" pull --ff-only

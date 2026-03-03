@@ -1,6 +1,13 @@
-# wt remove <branch>
+# wt remove [-d] [branch]
 _wt_remove() {
-  local branch="$1"
+  local delete_branch=false branch=""
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -d|--delete-branch) delete_branch=true; shift ;;
+      *) branch="$1"; shift ;;
+    esac
+  done
+
   local root
   root="$(_wt_resolve_root)" || return 1
 
@@ -57,8 +64,10 @@ _wt_remove() {
   echo "==> Removing worktree $dir_name ..."
   git -C "$root/.bare" worktree remove "$wt_path" --force
 
-  echo "==> Deleting local branch $branch ..."
-  git -C "$root/.bare" branch -D "$branch" 2>/dev/null || true
+  if [[ "$delete_branch" == true ]]; then
+    echo "==> Deleting local branch $branch ..."
+    git -C "$root/.bare" branch -D "$branch" 2>/dev/null || true
+  fi
 
   echo "==> Pruning worktree metadata ..."
   git -C "$root/.bare" worktree prune

@@ -158,13 +158,14 @@ wt sync
 
 Runs `pre-sync` and `post-sync` hooks.
 
-### `wt remove [branch]`
+### `wt remove [-d] [branch]`
 
-Remove a worktree and delete its local branch. Without arguments, presents an interactive picker listing non-base worktrees.
+Remove a worktree. Without arguments, presents an interactive picker listing non-base worktrees. The local branch is kept by default — use `-d` to delete it.
 
 ```sh
-wt remove fix-login  # direct
-wt remove            # interactive picker
+wt remove fix-login     # remove worktree, keep branch
+wt remove -d fix-login  # remove worktree and delete branch
+wt remove               # interactive picker
 ```
 
 Warns if there are uncommitted changes and asks for confirmation. Runs `pre-remove` and `post-remove` hooks.

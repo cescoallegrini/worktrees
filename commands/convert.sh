@@ -109,7 +109,10 @@ _wt_convert() {
     dir_name="$(_wt_normalize_branch "$current_branch")"
     echo "==> Restoring $current_branch worktree with your working changes ..."
     git -C "$repo_dir/.bare" worktree add --no-checkout "$repo_dir/$dir_name" "$current_branch"
-    mv "$tmpdir"/* "$tmpdir"/.[!.]* "$tmpdir"/..?* "$repo_dir/$dir_name/" 2>/dev/null
+    for item in "$tmpdir"/* "$tmpdir"/.[!.]* "$tmpdir"/..?*; do
+      [[ -e "$item" ]] || continue
+      mv "$item" "$repo_dir/$dir_name/"
+    done
     # Restore the original index to preserve staged/unstaged state
     local wt_gitdir
     wt_gitdir="$(git -C "$repo_dir/$dir_name" rev-parse --git-dir)"
@@ -118,7 +121,10 @@ _wt_convert() {
     # On the default branch — preserve files directly
     echo "==> Restoring $default_branch worktree with your working changes ..."
     git -C "$repo_dir/.bare" worktree add --no-checkout "$repo_dir/$default_branch" "$default_branch"
-    mv "$tmpdir"/* "$tmpdir"/.[!.]* "$tmpdir"/..?* "$repo_dir/$default_branch/" 2>/dev/null
+    for item in "$tmpdir"/* "$tmpdir"/.[!.]* "$tmpdir"/..?*; do
+      [[ -e "$item" ]] || continue
+      mv "$item" "$repo_dir/$default_branch/"
+    done
     # Restore the original index to preserve staged/unstaged state
     local wt_gitdir
     wt_gitdir="$(git -C "$repo_dir/$default_branch" rev-parse --git-dir)"

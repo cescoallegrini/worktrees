@@ -48,6 +48,7 @@ _wt_init() {
   echo "==> Detected default branch: $branch"
   echo "==> Creating $branch worktree ..."
   git -C "$target/.bare" worktree add "$target/$branch" "$branch"
+  git -C "$target/$branch" branch --set-upstream-to="origin/$branch" "$branch" --quiet
 
   echo "==> Creating .wt/ directory ..."
   mkdir -p "$target/.wt/hooks" "$target/.wt/commands"

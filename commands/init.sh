@@ -49,9 +49,6 @@ _wt_init() {
   echo "==> Creating $branch worktree ..."
   git -C "$target/.bare" worktree add "$target/$branch" "$branch"
 
-  echo "==> Creating worktrees/ directory ..."
-  mkdir -p "$target/worktrees"
-
   echo "==> Creating .wt/ directory ..."
   mkdir -p "$target/.wt/hooks" "$target/.wt/commands"
 
@@ -62,7 +59,6 @@ _wt_init() {
   echo "  Root:       $target"
   echo "  Bare repo:  $target/.bare"
   echo "  Main:       $target/$branch  (tracking $branch)"
-  echo "  Worktrees:  $target/worktrees/"
   echo "  Hooks:      $target/.wt/hooks/"
   echo "  Commands:   $target/.wt/commands/"
   echo ""

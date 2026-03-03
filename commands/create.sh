@@ -35,13 +35,13 @@ _wt_create() {
   local dir_name
   dir_name="$(_wt_normalize_branch "$branch")"
 
-  if [[ -d "$root/worktrees/$dir_name" ]]; then
-    echo "Worktree worktrees/$dir_name already exists."
-    echo "  cd $root/worktrees/$dir_name"
+  if [[ -d "$root/$dir_name" ]]; then
+    echo "Worktree $dir_name already exists."
+    echo "  cd $root/$dir_name"
     return 1
   fi
 
-  WT_BRANCH="$branch" WT_DIR_NAME="$dir_name" WT_WORKTREE_PATH="$root/worktrees/$dir_name" \
+  WT_BRANCH="$branch" WT_DIR_NAME="$dir_name" WT_WORKTREE_PATH="$root/$dir_name" \
     _wt_run_hook pre-create || return 1
 
   echo "==> Fetching latest from origin ..."
@@ -50,17 +50,17 @@ _wt_create() {
   # Check if branch exists on remote
   if git -C "$root/.bare" show-ref --verify --quiet "refs/remotes/origin/$branch" 2>/dev/null; then
     echo "==> Branch '$branch' exists on remote. Checking out ..."
-    git -C "$root/.bare" worktree add "$root/worktrees/$dir_name" "$branch" || return 1
+    git -C "$root/.bare" worktree add "$root/$dir_name" "$branch" || return 1
   else
     echo "==> Creating new branch '$branch' from $base ..."
-    git -C "$root/.bare" worktree add "$root/worktrees/$dir_name" -b "$branch" "$base" || return 1
+    git -C "$root/.bare" worktree add "$root/$dir_name" -b "$branch" "$base" || return 1
   fi
 
-  WT_BRANCH="$branch" WT_DIR_NAME="$dir_name" WT_WORKTREE_PATH="$root/worktrees/$dir_name" \
+  WT_BRANCH="$branch" WT_DIR_NAME="$dir_name" WT_WORKTREE_PATH="$root/$dir_name" \
     _wt_run_hook post-create
 
   echo ""
-  echo "Worktree ready: $root/worktrees/$dir_name"
+  echo "Worktree ready: $root/$dir_name"
   echo ""
-  echo "  cd $root/worktrees/$dir_name"
+  echo "  cd $root/$dir_name"
 }

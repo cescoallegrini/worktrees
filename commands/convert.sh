@@ -108,11 +108,11 @@ _wt_convert() {
     local dir_name
     dir_name="$(_wt_normalize_branch "$current_branch")"
     echo "==> Restoring $current_branch worktree with your working changes ..."
-    git -C "$repo_dir/.bare" worktree add --no-checkout "$repo_dir/worktrees/$dir_name" "$current_branch"
-    mv "$tmpdir"/* "$tmpdir"/.[!.]* "$tmpdir"/..?* "$repo_dir/worktrees/$dir_name/" 2>/dev/null
+    git -C "$repo_dir/.bare" worktree add --no-checkout "$repo_dir/$dir_name" "$current_branch"
+    mv "$tmpdir"/* "$tmpdir"/.[!.]* "$tmpdir"/..?* "$repo_dir/$dir_name/" 2>/dev/null
     # Restore the original index to preserve staged/unstaged state
     local wt_gitdir
-    wt_gitdir="$(git -C "$repo_dir/worktrees/$dir_name" rev-parse --git-dir)"
+    wt_gitdir="$(git -C "$repo_dir/$dir_name" rev-parse --git-dir)"
     cp "$saved_index" "$wt_gitdir/index"
   else
     # On the default branch — preserve files directly
@@ -128,9 +128,6 @@ _wt_convert() {
   # Clean up temp files
   rm -rf "$tmpdir" "$saved_index"
 
-  echo "==> Creating worktrees/ directory ..."
-  mkdir -p "$repo_dir/worktrees"
-
   echo "==> Creating .wt/ directory ..."
   mkdir -p "$repo_dir/.wt/hooks" "$repo_dir/.wt/commands"
 
@@ -141,19 +138,18 @@ _wt_convert() {
   echo "  Root:       $repo_dir"
   echo "  Bare repo:  $repo_dir/.bare"
   echo "  Main:       $repo_dir/$default_branch  (tracking $default_branch)"
-  if [[ -n "$current_branch" && "$current_branch" != "$default_branch" && "$current_branch" != "HEAD" ]]; then
+  if [[ -n "$on_different_branch" ]]; then
     local dir_name
     dir_name="$(_wt_normalize_branch "$current_branch")"
-    echo "  Branch:     $repo_dir/worktrees/$dir_name  (tracking $current_branch)"
+    echo "  Branch:     $repo_dir/$dir_name  (tracking $current_branch)"
   fi
-  echo "  Worktrees:  $repo_dir/worktrees/"
   echo "  Hooks:      $repo_dir/.wt/hooks/"
   echo "  Commands:   $repo_dir/.wt/commands/"
   echo ""
-  if [[ -n "$current_branch" && "$current_branch" != "$default_branch" && "$current_branch" != "HEAD" ]]; then
+  if [[ -n "$on_different_branch" ]]; then
     local dir_name
     dir_name="$(_wt_normalize_branch "$current_branch")"
-    echo "  cd $repo_dir/worktrees/$dir_name to continue where you left off."
+    echo "  cd $repo_dir/$dir_name to continue where you left off."
   else
     echo "  cd $repo_dir/$default_branch to get started."
   fi

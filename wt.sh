@@ -32,7 +32,7 @@ if [[ -z "$cmd" ]]; then
   echo "  -p, --project <name|path>  Operate on a specific project"
   echo ""
   echo "Commands:"
-  echo "  init     Scaffold a bare-repo + worktrees container from a remote"
+  echo "  init     Scaffold a bare-repo worktree container from a remote"
   echo "  convert  Convert a normal git repo to wt layout"
   echo "  create   Create a new worktree"
   echo "  sync     Fetch origin and update base branch"

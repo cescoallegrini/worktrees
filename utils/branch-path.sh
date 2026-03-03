@@ -3,9 +3,5 @@
 # Requires WT_ROOT_PATH and WT_BASE_BRANCH to be set.
 wt_branch_path() {
   local branch="$1"
-  if [[ "$branch" = "$WT_BASE_BRANCH" ]]; then
-    echo "$WT_ROOT_PATH/$WT_BASE_BRANCH"
-  else
-    echo "$WT_ROOT_PATH/worktrees/$branch"
-  fi
+  echo "$WT_ROOT_PATH/$branch"
 }

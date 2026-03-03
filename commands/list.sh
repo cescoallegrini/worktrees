@@ -7,34 +7,23 @@ _wt_list() {
   project_name="$(basename "$root")"
   local base_branch
   base_branch="$(_wt_default_branch "$root")"
-  local base_dir="$root/$base_branch"
 
   echo "$project_name — $root"
   echo ""
 
-  # Base branch
-  echo "Base:"
+  # Base branch first
   local commit
-  commit="$(git -C "$base_dir" log --oneline -1 2>/dev/null)"
+  commit="$(git -C "$root/$base_branch" log --oneline -1 2>/dev/null)"
   echo "  $base_branch  $commit"
 
-  # Worktrees
-  local has_worktrees=false
-  for d in "$root"/worktrees/*/; do
+  # Other worktrees
+  local name
+  for d in "$root"/*/; do
     [[ -d "$d" ]] || continue
-    if [[ "$has_worktrees" == false ]]; then
-      echo ""
-      echo "Worktrees:"
-      has_worktrees=true
-    fi
-    local name
     name="$(basename "$d")"
+    [[ "$name" == .bare || "$name" == .wt ]] && continue
+    [[ "$name" == "$base_branch" ]] && continue
     commit="$(git -C "$d" log --oneline -1 2>/dev/null)"
     echo "  $name  $commit"
   done
-
-  if [[ "$has_worktrees" == false ]]; then
-    echo ""
-    echo "No worktrees."
-  fi
 }

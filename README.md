@@ -15,9 +15,8 @@ my-project/
 │   ├── commands/
 │   └── hooks/
 ├── main/               # primary worktree (named after the default branch)
-└── worktrees/          # ephemeral worktrees
-    ├── feature-login/
-    └── fix-auth/
+├── feature-login/      # worktrees live at the root
+└── fix-auth/
 ```
 
 The primary worktree directory is named after the remote's default branch — `main`, `master`, or whatever the remote uses. It is detected automatically.
@@ -118,7 +117,7 @@ wt convert ~/Projects/my-project
 
 Requires an `origin` remote to be configured. Preserves your working tree state — staged changes, unstaged modifications, and untracked files are kept intact in the resulting worktree.
 
-If you're on a branch other than the default, both worktrees are created: the default branch gets a fresh checkout, and your current branch preserves your in-progress work under `worktrees/`. Other local branches are kept in the bare repo but don't get worktrees — use `wt create` to check them out.
+If you're on a branch other than the default, both worktrees are created: the default branch gets a fresh checkout, and your current branch preserves your in-progress work. Other local branches are kept in the bare repo but don't get worktrees — use `wt create` to check them out.
 
 ### `wt create <branch> [--from <base>]`
 
@@ -178,10 +177,7 @@ List all worktrees with their current commit.
 $ wt list
 my-project — ~/Projects/my-project
 
-Base:
   main     4e864a0 Fix TTY detection...
-
-Worktrees:
   feature  cb6f456 Convert wt from...
   hotfix   abff7a3 Add --project...
 ```

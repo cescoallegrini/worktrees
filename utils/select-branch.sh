@@ -8,7 +8,7 @@ wt_select_branch() {
   for d in "$WT_ROOT_PATH"/*/; do
     [[ -d "$d" ]] || continue
     name="$(basename "$d")"
-    [[ "$name" == .bare || "$name" == .wt ]] && continue
+    [[ "$name" == .* ]] && continue
     branches+=("$name")
   done
   printf '%s\n' "${branches[@]}" | wt_pick "Select branch"

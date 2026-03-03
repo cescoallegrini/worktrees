@@ -21,7 +21,7 @@ _wt_list() {
   for d in "$root"/*/; do
     [[ -d "$d" ]] || continue
     name="$(basename "$d")"
-    [[ "$name" == .bare || "$name" == .wt ]] && continue
+    [[ "$name" == .* ]] && continue
     [[ "$name" == "$base_branch" ]] && continue
     commit="$(git -C "$d" log --oneline -1 2>/dev/null)"
     echo "  $name  $commit"

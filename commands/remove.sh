@@ -13,7 +13,7 @@ _wt_remove() {
     for d in "$root"/*/; do
       [[ -d "$d" ]] || continue
       name="$(basename "$d")"
-      [[ "$name" == .bare || "$name" == .wt ]] && continue
+      [[ "$name" == .* ]] && continue
       [[ "$name" == "$base_branch" ]] && continue
       branches+=("$name")
     done

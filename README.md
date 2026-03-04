@@ -130,7 +130,7 @@ wt create feature/v2 --from develop
 
 Branch names containing `/` are normalized to `-` for the directory name (e.g. `feature/login` becomes `feature-login`).
 
-If the branch already exists on the remote, it checks it out. Otherwise, it creates a new branch from the default branch (or the ref specified by `--from`).
+If the branch already exists on the remote or locally, it checks it out. Otherwise, it creates a new branch from the default branch (or the ref specified by `--from`).
 
 The `--from` flag auto-resolves short names — `--from develop` will use `origin/develop` if `develop` doesn't exist locally.
 

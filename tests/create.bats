@@ -82,6 +82,18 @@ teardown() { destroy_test_env; }
   [[ "$output" == *"already exists"* ]]
 }
 
+@test "checks out existing local-only branch" {
+  # Create a local branch in the bare repo (no remote tracking)
+  git -C "$PROJECT/.bare" branch local-only main
+  cd "$PROJECT/main"
+  run _wt_create local-only
+  [ "$status" -eq 0 ]
+  [ -d "$PROJECT/local-only" ]
+  local branch
+  branch="$(git -C "$PROJECT/local-only" rev-parse --abbrev-ref HEAD)"
+  [ "$branch" = "local-only" ]
+}
+
 @test "fails without branch name" {
   cd "$PROJECT/main"
   run _wt_create

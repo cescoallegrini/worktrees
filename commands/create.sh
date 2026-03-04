@@ -47,9 +47,12 @@ _wt_create() {
   echo "==> Fetching latest from origin ..."
   git -C "$root/.bare" fetch origin || return 1
 
-  # Check if branch exists on remote
+  # Check if branch exists on remote or locally
   if git -C "$root/.bare" show-ref --verify --quiet "refs/remotes/origin/$branch" 2>/dev/null; then
     echo "==> Branch '$branch' exists on remote. Checking out ..."
+    git -C "$root/.bare" worktree add "$root/$dir_name" "$branch" || return 1
+  elif git -C "$root/.bare" show-ref --verify --quiet "refs/heads/$branch" 2>/dev/null; then
+    echo "==> Local branch '$branch' exists. Checking out ..."
     git -C "$root/.bare" worktree add "$root/$dir_name" "$branch" || return 1
   else
     echo "==> Creating new branch '$branch' from $base ..."
